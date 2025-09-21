@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bodyrepair™ FAQ Widget</title>
+  <style>
+    /* ========== Animations ========== */
+    @keyframes sonarWave {
+      0% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.5); opacity: 0.3; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    /* ========== Bouton flottant ========== */
+    #faq-toggle-btn {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 9999;
+      width: 56px;
+      height: 56px;
+      background: black;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      border: none;
+      cursor: pointer;
+      outline: none;
+    }
+
+    #faq-toggle-btn .icon {
+      color: #D4B5A0;
+      font-size: 30px;
+      font-weight: bold;
+      font-family: 'Playfair Display', serif;
+      position: relative;
+      z-index: 2;
+    }
+
+    .sonar-wave {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: black;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .sonar-wave.animate {
+      animation: sonarWave 4s infinite;
+    }
+
+    /* ========== Modal ========== */
+    #faq-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99998;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    #faq-modal.active {
+      display: flex;
+    }
+
+    .faq-content {
+      backdrop-filter: blur(16px);
+      background: rgba(255,255,255,0.95);
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .faq-header {
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .faq-question {
+      margin: 0 0 16px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      padding: 16px;
+      background: rgba(245,245,245,0.8);
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .faq-answer {
+      padding: 16px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid rgba(0,0,0,0.05);
+      border-radius: 12px;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .faq-answer.active {
+      display: block;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <!-- Bouton flottant -->
+  <button id="faq-toggle-btn" aria-label="Ouvrir la FAQ">
+    <span class="icon">?</span>
+    <div class="sonar-wave animate" style="animation-delay: 0s;"></div>
+    <div class="sonar-wave animate" style="animation-delay: 2s;"></div>
+  </button>
+
+  <!-- Modal -->
+  <div id="faq-modal">
+    <div class="faq-content">
+      <div class="faq-header">
+        <h2>FAQ</h2>
+        <span class="close-btn" onclick="toggleFAQ()">✕</span>
+      </div>
+      <div class="faq-list" id="faq-list">
+        <!-- Questions générées par JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const faqData = [
+      {
+        question: "Bodyrepair, c’est quoi exactement ?",
+        answer: "<strong>Bodyrepair™</strong> accompagne celles et ceux qui souhaitent retrouver une <strong>apparence en harmonie</strong> avec leur parcours de vie.\n\nNous proposons des <strong>accompagnements esthétiques non invasifs</strong> pour atténuer les marques visibles du temps, de la grossesse, d’une perte de poids ou d’une transformation physique.\n\nPas de chirurgie, pas de promesses excessives. Juste un <strong>espace calme, discret, et un travail précis</strong>."
+      },
+      {
+        question: "Est-ce que vous êtes un médecin ou un centre médical ?",
+        answer: "Non. <strong>Bodyrepair™ n’est pas un cabinet médical</strong>, ni un lieu de soins thérapeutiques.\nLa praticienne n’est pas médecin, chirurgien ni paramédicale.\nLes prestations proposées sont <strong>esthétiques et non réglementées</strong>, dans le cadre d’un accompagnement personnel.\n\nNous ne diagnostiquons, traitons ni ne guérissons aucune condition médicale."
+      },
+      {
+        question: "Quels sont les résultats attendus ?",
+        answer: "Les résultats varient selon chaque personne.\nNotre objectif est de <strong>réduire la visibilité</strong> de certaines marques cutanées, de redonner du galbe ou de l’uniformité, ou de harmoniser l’apparence.\n\nLe résultat est <strong>progressif, naturel</strong>, et s’intègre au rythme de votre peau.\nIl n’est ni immédiat, ni identique d’un individu à l’autre."
+      },
+      {
+        question: "Est-ce douloureux ?",
+        answer: "<strong>Absolument pas</strong>.\nNous prenons le <strong>temps nécessaire</strong> pour que vous soyez à l’aise.\nSi vous êtes sensible, nous adaptons notre approche."
+      },
+      {
+        question: "Combien de séances sont nécessaires ?",
+        answer: "Cela dépend de votre projet, de votre physiologie et de votre hygiène de vie.\n\nChez certaines personnes un résultat visible en <u>3 à 5 séances</u>\nD’autres nécessitent des séances supplémentaires. Un suivi sur <u>plusieurs semaines</u> pour affiner le rendu fait partie de nos prestations.\nUn bilan personnalisé vous permettra d’avoir un plan clair avant de commencer."
+      },
+      {
+        question: "Y a-t-il des effets après la prestation ?",
+        answer: "Oui, il est fréquent d’observer :\n\n- Des <strong>rougeurs légères</strong>\n- Un <strong>léger gonflement</strong>\n- Une <strong>coloration temporaire</strong>\n- Ou un <strong>relief discret</strong>\n\nCes signes sont <strong>normaux, sans danger</strong>, et disparaissent spontanément en <u>quelques heures à quelques jours</u>.\n\nDes recommandations lors du rendez-vous vous seront faites et également transmises par e-mail afin de maximiser et préserver le résultat."
+      },
+      {
+        question: "Puis-je me rétracter après réservation ?",
+        answer: "Oui. Vous disposez d’un délai de <u>14 jours calendaires</u> pour vous rétracter sans motif, à condition qu’aucune séance n’ait commencé.\n\nDès lors que la première étape de l’accompagnement a lieu, ce droit prend fin, conformément à l’article L. 221-25 du Code de la consommation."
+      },
+      {
+        question: "Que se passe-t-il en cas d’annulation ?",
+        answer: "Une annulation moins de <u>48 heures</u> avant le rendez-vous et hors délais de retractation peut donner lieu à une participation forfaitaire de <u>48 €</u>, sauf cas de force majeure ou justificatif médical.\n\nCe montant couvre les frais d’organisation et la perte d’un créneau non réaffectable."
+      },
+      {
+        question: "Peut-on payer en plusieurs fois ?",
+        answer: "Oui, vous pouvez payer en <u>4 fois sans frais</u> à partir d'un montant de <u>100 euros</u>."
+      },
+      {
+        question: "Comment prendre rendez-vous ?",
+        answer: "Vous pouvez réserver directement en ligne via le bouton \"<strong>Prendre rendez-vous</strong>\" sur le site.\nLe planning est mis à jour en temps réel.\n\nSi vous avez des questions ou besoin d’un échange avant de vous engager, vous pouvez nous contacter via la rubrique contact de notre site par téléphone au <u>+33 7 87 90 94 81</u>."
+      },
+      {
+        question: "Où se trouve le cabinet ?",
+        answer: "À <strong>Villeurbanne</strong>, dans un <strong>espace privé, calme et accessible</strong>.\nL’adresse exacte vous sera communiquée après réservation, pour préserver la discrétion de l’endroit.\n\nProche de <strong>Lyon</strong>, facilement joignable en transport ou en voiture."
+      },
+      {
+        question: "Les prestations sont-elles remboursées ?",
+        answer: "Non. Ces accompagnements esthétiques ne sont <strong>ni médicaux ni chirurgicaux</strong>, et ne relèvent donc d’aucun remboursement par la Sécurité sociale ou les mutuelles."
+      }
+    ];
+
+    function toggleFAQ() {
+      const modal = document.getElementById('faq-modal');
+      if (modal.classList.contains('active')) {
+        modal.classList.remove('active');
+        parent.postMessage('CLOSE_FAQ', '*');
+      } else {
+        modal.classList.add('active');
+      }
+    }
+
+    function toggleAnswer(index) {
+      const answer = document.getElementById(`answer-${index}`);
+      answer.classList.toggle('active');
+    }
+
+    // Génération des questions
+    const faqList = document.getElementById('faq-list');
+    faqData.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'faq-item';
+      div.innerHTML = `
+        <div class="faq-question" onclick="toggleAnswer(${index})">
+          ${item.question}
+          <svg style="float:right; transition: transform 0.3s;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6"></path>
+          </svg>
+        </div>
+        <div id="answer-${index}" class="faq-answer">${item.answer}</div>
+      `;
+      faqList.appendChild(div);
+    });
+
+    // Écouteur pour ouvrir depuis l'extérieur (via postMessage)
+    window.addEventListener('message', function(e) {
+      if (e.data === 'OPEN_FAQ') {
+        toggleFAQ();
+      }
+    });
+
+    // Lien entre le bouton et la fonction
+    document.getElementById('faq-toggle-btn').addEventListener('click', toggleFAQ);
+  </script>
+</body>
+</html>
